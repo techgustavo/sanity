@@ -1,0 +1,33 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    name: typst ${{ matrix.typst }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        typst: ["0.14.0", "0.15.1", "latest"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install typst
+        run: |
+          set -eu
+          version='${{ matrix.typst }}'
+          if [ "$version" = latest ]; then
+            version=$(curl -sSL https://api.github.com/repos/typst/typst/releases/latest |
+              sed -n 's/.*"tag_name": *"v\([^"]*\)".*/\1/p' | head -1)
+          fi
+          curl -sSL "https://github.com/typst/typst/releases/download/v$version/typst-x86_64-unknown-linux-musl.tar.xz" |
+            tar -xJ
+          echo "$PWD/typst-x86_64-unknown-linux-musl" >> "$GITHUB_PATH"
+
+      - run: typst --version
+      - run: bash tests/run.sh
