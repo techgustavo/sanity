@@ -38,6 +38,7 @@
     // (only a block equation can carry a number... and only a numbered can be
     // referenced)
     if func == math.equation and not elem.block { continue }
+    if elem.numbering == none { continue }
 
     let (group, noun) = if func == figure {
       let kind = figure-kind(elem)
