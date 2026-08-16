@@ -1,0 +1,82 @@
+#import "src/core.typ" as _core
+#import "src/citations.typ" as _citations
+#import "src/collect.typ" as _collect
+#import "src/engine.typ" as _engine
+#import "src/report.typ" as _report
+
+#let _reporting-only() = sys.inputs.at("sanity", default: none) == "report"
+
+#let _config-in-effect(bibliography, checks, severities) = {
+  let stored = _collect.stored-config()
+  let keys = _citations.entry-keys(bibliography)
+  if stored == none {
+    _core.config(checks: checks, severities: severities, bib-keys: keys)
+  } else {
+    _core.config(
+      checks: stored.checks + checks,
+      severities: stored.severities + severities,
+      bib-keys: if keys == none { stored.bib-keys } else { keys },
+    )
+  }
+}
+
+/// sanity check :)
+#let sanity(
+  body,
+  checks: (:),
+  severities: (:),
+  bibliography: none,
+  report: auto,
+  strict: false,
+) = {
+  let cfg = _core.config(
+    checks: checks,
+    severities: severities,
+    bib-keys: _citations.entry-keys(bibliography),
+  )
+
+  // left in the document
+  [#metadata((
+      checks: cfg.checks,
+      severities: cfg.severities,
+      bib-keys: cfg.bib-keys,
+    )) <sanity-config>]
+
+  body
+
+  [#metadata(none) <sanity-end>]
+
+  context {
+    let result = _engine.analyse(cfg)
+    if strict and _core.blocking(result.findings) and not _reporting-only() {
+      panic(_report.format-text(result.findings))
+    }
+    let outermost = query(selector(<sanity-end>).after(here())).len() == 0
+    if report == auto and outermost {
+      _report.appended-report(result.findings, locations: result.locations)
+    }
+  }
+}
+
+/// silence every finding about the given labels
+///
+/// ```typ
+/// #sanity-ignore(<fig:cover>, reason: "decorative")
+/// ```
+#let sanity-ignore(..targets, reason: none) = {
+  for target in targets.pos() {
+    [#metadata((target: str(target), reason: reason)) <sanity-ignore>]
+  }
+}
+
+#let sanity-findings(bibliography: none, checks: (:), severities: (:)) = {
+  _engine.analyse(_config-in-effect(bibliography, checks, severities)).findings
+}
+
+#let sanity-text(bibliography: none, checks: (:), severities: (:)) = {
+  _report.format-text(sanity-findings(
+    bibliography: bibliography,
+    checks: checks,
+    severities: severities,
+  ))
+}
