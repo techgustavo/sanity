@@ -1,3 +1,4 @@
 *.pdf
 *.png
+!docs/*.png
 _probe.typ
