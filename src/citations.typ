@@ -122,3 +122,28 @@
       target: key,
     ))
 }
+
+#let not-checked-id = "bibliography-not-checked"
+
+/// a package cannot open the document .bib file, so without the data
+/// `uncited-entry` cannot run
+#let not-checked(sources, cfg) = {
+  if not cfg.checks.at(not-checked-id, default: false) { return () }
+
+  let read-calls = sources.map(s => "read(\"" + s + "\")")
+  let argument = if read-calls.len() == 0 {
+    "read(..)"
+  } else if read-calls.len() == 1 {
+    read-calls.first()
+  } else {
+    "(" + read-calls.join(", ") + ")"
+  }
+
+  (finding(
+    not-checked-id,
+    cfg.severities.at(not-checked-id),
+    "bibliography entries are not checked; add bibliography: "
+      + argument
+      + " to the show rule, or use bin/sanity",
+  ),)
+}
