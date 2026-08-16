@@ -1,12 +1,25 @@
 #let severity-order = ("info", "warning", "error")
 
-#let finding(id, severity, message, target: none, page: none) = (
+#let finding(
+  id,
+  severity,
+  message,
+  target: none,
+  page: none,
+  page-label: none,
+  order: 0,
+) = (
   id: id,
   severity: severity,
   message: message,
   target: target,
   page: page,
+  page-label: page-label,
+  order: order,
 )
+
+/// whether anything here should fail a build, "info" never does
+#let blocking(findings) = findings.any(f => f.severity != "info")
 
 #let default-checks = (
   "unreferenced-figure": true,
@@ -17,9 +30,14 @@
   // this would mostly produce (a lot of) noise (so false by default)
   "unreferenced-heading": false,
   "duplicate-label": true,
+  "heading-level-skip": true,
   "missing-caption": true,
   "empty-caption": true,
   "uncited-entry": true,
+  "bibliography-not-checked": true,
+  "orphaned-ignore": true,
+  "missing-alt-text": false,
+  "table-without-header": false,
 )
 
 #let default-severities = (
@@ -30,9 +48,14 @@
   "unreferenced-heading": "warning",
   // a duplicated label makes every reference to it a hard compile error
   "duplicate-label": "error",
+  "heading-level-skip": "warning",
   "missing-caption": "warning",
   "empty-caption": "warning",
   "uncited-entry": "warning",
+  "bibliography-not-checked": "info",
+  "orphaned-ignore": "warning",
+  "missing-alt-text": "warning",
+  "table-without-header": "warning",
 )
 
 // a typo in a check id would otherwise turn a check off in silence
@@ -52,6 +75,16 @@
     severities: default-severities + severities,
     bib-keys: bib-keys,
   )
+}
+
+#let describe(elem) = {
+  if elem.target != none {
+    elem.noun + " <" + elem.target + ">"
+  } else if elem.page-label != none {
+    elem.noun + " on page " + elem.page-label
+  } else {
+    elem.noun
+  }
 }
 
 #let _whitespace = ("space", "linebreak", "parbreak", "h", "v")

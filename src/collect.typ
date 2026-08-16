@@ -2,12 +2,6 @@
 
 #let paged() = if "target" in dictionary(std) { target() == "paged" } else { true }
 
-#let page-of(elem) = {
-  if not paged() { return none }
-  let loc = elem.location()
-  if loc == none { none } else { loc.page() }
-}
-
 #let figure-kind(fig) = {
   let kind = fig.kind
   if kind == table { return "table" }
@@ -23,38 +17,77 @@
 }
 
 // everything Typst will let you write `@label` for
-#let _referenceable = {
-  selector(figure).or(math.equation).or(heading).or(std.footnote)
+#let _queried = {
+  selector(figure)
+    .or(math.equation)
+    .or(heading)
+    .or(std.footnote)
+    .or(std.image)
+    .or(std.table)
 }
 
-#let labelled-elements() = {
-  let out = ()
+#let _group-of(elem) = {
+  let func = elem.func()
+  if func == figure {
+    let kind = figure-kind(elem)
+    (if kind == "table" { "table" } else { "figure" }, kind)
+  } else if func == math.equation {
+    ("equation", "equation")
+  } else if func == heading {
+    ("heading", "heading")
+  } else {
+    ("footnote", "footnote")
+  }
+}
 
-  for elem in query(_referenceable) {
-    let name = label-of(elem)
-    if name == none { continue }
+#let collected() = {
+  let elements = ()
+  let images = ()
+  let tables = ()
+  let is-paged = paged()
+  let labels = (:)
 
-    let func = elem.func()
-    // (only a block equation can carry a number... and only a numbered can be
-    // referenced)
-    if func == math.equation and not elem.block { continue }
-    if elem.numbering == none { continue }
-
-    let (group, noun) = if func == figure {
-      let kind = figure-kind(elem)
-      (if kind == "table" { "table" } else { "figure" }, kind)
-    } else if func == math.equation {
-      ("equation", "equation")
-    } else if func == heading {
-      ("heading", "heading")
-    } else {
-      ("footnote", "footnote")
+  for (i, elem) in query(_queried).enumerate() {
+    let loc = if is-paged { elem.location() } else { none }
+    let pg = if loc == none { none } else { loc.page() }
+    let pg-label = if pg == none { none } else {
+      let key = str(pg)
+      if key not in labels {
+        let scheme = loc.page-numbering()
+        labels.insert(
+          key,
+          if scheme == none { str(pg) } else { numbering(scheme, ..counter(page).at(loc)) },
+        )
+      }
+      labels.at(key)
     }
 
-    out.push((target: name, group: group, noun: noun, page: page-of(elem), element: elem))
+    let common = (
+      order: i,
+      target: label-of(elem),
+      page: pg,
+      page-label: pg-label,
+      element: elem,
+    )
+
+    let func = elem.func()
+    if func == std.image {
+      images.push(common + (noun: "image"))
+    } else if func == std.table {
+      tables.push(common + (noun: "table"))
+    } else {
+      let (group, noun) = _group-of(elem)
+      elements.push(common + (
+        group: group,
+        noun: noun,
+        // (only a block equation can carry a number... and only a numbered can be
+        // referenced)
+        numbered: elem.numbering != none and (func != math.equation or elem.block),
+      ))
+    }
   }
 
-  out
+  (elements: elements, images: images, tables: tables, count: elements.len() + images.len() + tables.len())
 }
 
 /// bib keys
@@ -68,6 +101,8 @@
   bibs.map(b => b.sources).flatten().filter(s => type(s) == str).dedup()
 }
 
+#let label-exists(name) = query(label(name)).len() > 0
+
 /// values of our own metadata markers
 #let _markers(name, key) = {
   query(label(name))
@@ -75,8 +110,8 @@
     .map(m => m.value)
 }
 
-/// labels the author asked to keep quiet about
-#let ignored-labels() = _markers("sanity-ignore", "target").map(v => v.target).dedup()
+/// what the author asked to keep quiet about, as (target, reason) pairs
+#let ignores() = _markers("sanity-ignore", "target")
 
 /// configuration left behind by the show rule, if the document uses one
 #let stored-config() = {
