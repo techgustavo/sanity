@@ -31,3 +31,11 @@ jobs:
 
       - run: typst --version
       - run: bash tests/run.sh
+
+  package:
+    name: package-check
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker run --rm -v "$PWD:/data" ghcr.io/typst/package-check check
