@@ -3,19 +3,12 @@
 #import "structure.typ"
 #import "captions.typ"
 #import "citations.typ"
-
-#let _bibliography-hint(sources) = {
-  let read-calls = sources.map(s => "read(\"" + s + "\")")
-  let argument = if read-calls.len() == 1 {
-    read-calls.first()
-  } else {
-    "(" + read-calls.join(", ") + ")"
-  }
-  "bibliography entries are not checked; add bibliography: " + argument + " to the show rule"
-}
+#import "accessibility.typ"
+#import "ignores.typ"
 
 #let analyse(cfg) = {
-  let elements = collect.labelled-elements()
+  let doc = collect.collected()
+  let elements = doc.elements
   let referenced = collect.referenced-labels()
   let bibs = collect.bibliographies()
 
@@ -23,50 +16,60 @@
   findings += references.run(elements, referenced, cfg)
   findings += structure.run(elements, cfg)
   findings += captions.run(elements, cfg)
+  findings += accessibility.run(doc.images, doc.tables, cfg)
 
-  if cfg.bib-keys != none and bibs.len() > 0 and not collect.prints-full-bibliography(bibs) {
-    findings += citations.run(cfg.bib-keys, collect.cited-keys(), cfg)
-  }
+  let from-bibliography = if bibs.len() > 0 and not collect.prints-full-bibliography(bibs) {
+    if cfg.bib-keys == none {
+      citations.not-checked(collect.bibliography-sources(bibs), cfg)
+    } else {
+      citations.run(cfg.bib-keys, collect.cited-keys(), cfg)
+    }
+  } else { () }
+  findings += from-bibliography.enumerate().map(((i, f)) => f + (order: doc.count + i))
 
-  let ignored = collect.ignored-labels()
+  let exemptions = collect.ignores()
+  let ignored = exemptions.map(i => i.target).dedup()
   findings = findings.filter(f => f.target == none or f.target not in ignored)
+
+  let orphaned = doc.count + from-bibliography.len()
+  findings += ignores
+    .run(exemptions, cfg.bib-keys, cfg)
+    .enumerate()
+    .map(((i, f)) => f + (order: orphaned + i))
 
   let seen = ()
   let unique = ()
   for f in findings {
-    let key = (f.id, f.target)
-    if key in seen { continue }
-    seen.push(key)
+    if f.target != none {
+      let key = (f.id, f.target)
+      if key in seen { continue }
+      seen.push(key)
+    }
     unique.push(f)
   }
   findings = unique
 
   // report in reading order
-  let position = (:)
-  for (i, elem) in elements.enumerate() {
-    if elem.target not in position { position.insert(elem.target, i) }
-  }
-  let rank(f) = {
-    if f.target == none { elements.len() } else { position.at(f.target, default: elements.len()) }
-  }
   let stride = findings.len() + 1
   findings = findings
     .enumerate()
-    .sorted(key: ((i, f)) => rank(f) * stride + i)
-    .map(((i, f)) => f)
+    .sorted(key: ((i, f)) => f.order * stride + i)
+    .map(((i, f)) => (
+      id: f.id,
+      severity: f.severity,
+      message: f.message,
+      target: f.target,
+      page: f.page,
+      page-label: f.page-label,
+    ))
 
-  // said once
-  let notes = ()
-  let sources = collect.bibliography-sources(bibs)
-  if findings.len() > 0 and cfg.bib-keys == none and sources.len() > 0 {
-    notes.push(_bibliography-hint(sources))
-  }
-
-  // so that the appended report send a reader straight to the element
+  // so that the appended report sends a reader straight to the element
   let locations = (:)
   for elem in elements {
-    if elem.target not in locations { locations.insert(elem.target, elem.element.location()) }
+    if elem.target != none and elem.target not in locations {
+      locations.insert(elem.target, elem.element.location())
+    }
   }
 
-  (findings: findings, notes: notes, locations: locations)
+  (findings: findings, locations: locations)
 }

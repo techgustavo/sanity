@@ -18,16 +18,13 @@
 }
 
 /// one finding per line
-#let format-text(findings, notes: ()) = {
-  if findings.len() == 0 and notes.len() == 0 { return "" }
+#let format-text(findings) = {
+  if findings.len() == 0 { return "" }
 
   let lines = ()
   for f in findings {
     lines.push(f.severity + ": " + f.message + " [" + f.id + "]")
-    if f.page != none { lines.push("  --> page " + str(f.page)) }
-  }
-  for note in notes {
-    lines.push("note: " + note)
+    if f.page-label != none { lines.push("  --> page " + f.page-label) }
   }
   lines.push("")
   lines.push("sanity: " + summary(findings))
@@ -35,20 +32,20 @@
 }
 
 #let _colors = (
-  info: rgb("#5f6773"),
+  info: rgb("#5481c4"),
   warning: rgb("#d8a926"),
   error: rgb("#dc2d21"),
 )
 
 /// the page a finding sits on
 #let _where(f, locations) = {
-  if f.page == none { return [] }
-  let label = "page " + str(f.page)
+  if f.page-label == none { return [] }
+  let label = "page " + f.page-label
   let loc = locations.at(f.target, default: none)
   text(fill: _colors.info, if loc == none { label } else { link(loc, label) })
 }
 
-#let _body(findings, notes, locations) = [
+#let _body(findings, locations) = [
   #set text(font: ("DejaVu Sans Mono",), size: 8.5pt, fill: rgb("#1c1c1c"))
   #set par(justify: false, leading: 0.55em)
 
@@ -71,18 +68,11 @@
       )
     }
   )
-
-  #if notes.len() > 0 [
-    #v(0.6em)
-    #for note in notes [
-      #text(fill: _colors.info)[note: #note] \
-    ]
-  ]
 ]
 
 /// the same findings, appended to the document
-#let appended-report(findings, notes: (), locations: (:)) = {
-  if findings.len() == 0 and notes.len() == 0 { return none }
+#let appended-report(findings, locations: (:)) = {
+  if findings.len() == 0 { return none }
 
   if paged() {
     page(
@@ -90,9 +80,9 @@
       header: none,
       footer: none,
       numbering: none,
-      _body(findings, notes, locations),
+      _body(findings, locations),
     )
   } else {
-    raw(format-text(findings, notes: notes), block: true)
+    raw(format-text(findings), block: true)
   }
 }
