@@ -1,6 +1,6 @@
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/banner-dark.svg">
-  <img alt="sanity checks for your Typst documents" src="docs/assets/banner-light.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/banner-dark.svg" width="100%">
+  <img alt="sanity checks for your Typst documents" src="docs/assets/banner-light.svg" width="100%">
 </picture>
 
 `sanity` reads your compiled document and reports the figures nothing points at, the bibliography entries nothing cites, and the captions and labels that went missing on the way.
@@ -13,7 +13,7 @@
 
 These two lines are *basically* what you need to use the package. When there is nothing to report, the compiled PDF is byte for byte the one you would have got without `sanity`. When there is, a page is appended listing what turned up, just like this:
 
-![Six findings, each with its severity, its message, the id of the check that made it, and a link to the page it is on.](docs/assets/report.svg)
+<img alt="Six findings, each with its severity, its message, the id of the check that made it, and a link to the page it is on." src="docs/assets/report.svg" width="100%">
 
 > [!NOTE]
 > Needs Typst 0.14 or newer. The command line script additionally needs 0.15, (`typst eval` is required).
