@@ -24,6 +24,7 @@
 #let default-checks = (
   "unreferenced-figure": true,
   "unreferenced-table": true,
+  "unreferenced-listing": true,
   "unreferenced-equation": true,
   "unreferenced-footnote": true,
   // labelling sections you never cross-reference is common enough that
@@ -45,6 +46,7 @@
 #let default-severities = (
   "unreferenced-figure": "warning",
   "unreferenced-table": "warning",
+  "unreferenced-listing": "warning",
   "unreferenced-equation": "warning",
   "unreferenced-footnote": "warning",
   "unreferenced-heading": "warning",
