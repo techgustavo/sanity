@@ -80,6 +80,7 @@
       target: label-of(elem),
       page: pg,
       page-label: pg-label,
+      location: loc,
       element: elem,
     )
 
@@ -110,7 +111,11 @@
 }
 
 /// bib keys
-#let cited-keys() = query(std.cite).map(c => str(c.key)).dedup()
+#let cited-keys() = {
+  let cited = (:)
+  for c in query(std.cite) { cited.insert(str(c.key), true) }
+  cited
+}
 
 #let bibliographies() = query(std.bibliography)
 

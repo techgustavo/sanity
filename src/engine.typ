@@ -59,13 +59,14 @@
     .enumerate()
     .map(((i, f)) => f + (order: orphaned + i))
 
-  let seen = ()
+  // one finding of a kind per element
+  let seen = (:)
   let unique = ()
   for f in findings {
     if f.target != none {
-      let key = (f.id, f.target)
+      let key = f.id + "\u{0}" + f.target
       if key in seen { continue }
-      seen.push(key)
+      seen.insert(key, true)
     }
     unique.push(f)
   }
@@ -85,11 +86,16 @@
       page-label: f.page-label,
     ))
 
-  // so that the appended report sends a reader straight to the element
   let locations = (:)
-  for elem in elements {
-    if elem.target != none and elem.target not in locations {
-      locations.insert(elem.target, elem.element.location())
+  if collect.paged() {
+    let wanted = (:)
+    for f in findings {
+      if f.target != none { wanted.insert(f.target, true) }
+    }
+    for elem in elements {
+      if elem.target == none or elem.target not in wanted { continue }
+      if elem.target in locations { continue }
+      locations.insert(elem.target, elem.location)
     }
   }
 

@@ -103,11 +103,18 @@
   let each = if type(sources) == array { sources } else { (sources,) }
   if each.len() == 0 { return none }
 
+  // deduplicated as they arrive, since the order they arrive in is the order
+  // the report follows
+  let seen = (:)
   let keys = ()
   for source in each {
-    keys += _keys-of(source)
+    for key in _keys-of(source) {
+      if key in seen { continue }
+      seen.insert(key, true)
+      keys.push(key)
+    }
   }
-  keys.dedup()
+  keys
 }
 
 #let run(keys, cited, cfg) = {
