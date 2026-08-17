@@ -1,0 +1,130 @@
+#!/usr/bin/env sh
+# sanity paper.typ
+# sanity paper.typ --json
+set -eu
+
+package=${SANITY_PACKAGE:-@preview/sanity:0.1.0}
+
+usage() {
+  cat <<'EOF'
+usage: sanity <document.typ> [--json] [typst eval options...]
+
+Prints sanity's findings for a Typst document, without modifying it. Exits 1 on
+a warning or an error, 0 otherwise, and 2 when the document will not compile.
+
+  --json      print the findings as a JSON array instead of a report
+  --version   print the package version this script imports
+  --help
+EOF
+}
+
+json=0
+doc=
+left=$#
+while [ $left -gt 0 ]; do
+  arg=$1
+  shift
+  left=$((left - 1))
+  case $arg in
+    --json) json=1 ;;
+    -h | --help)
+      usage
+      exit 0
+      ;;
+    --version)
+      echo "sanity: $package"
+      exit 0
+      ;;
+    *)
+      if [ -z "$doc" ]; then doc=$arg; else set -- "$@" "$arg"; fi
+      ;;
+  esac
+done
+
+if [ -z "$doc" ]; then
+  usage >&2
+  exit 2
+fi
+
+# the text report is one string
+call=sanity-text
+format=yaml
+if [ "$json" = 1 ]; then
+  call=sanity-findings
+  format=json
+fi
+
+root=
+prev=
+for arg in "$@"; do
+  case $prev in --root) root=$arg ;; esac
+  case $arg in --root=*) root=${arg#--root=} ;; esac
+  prev=$arg
+done
+
+base=/
+doc_dir=$(cd "$(dirname "$doc")" && pwd)
+if [ -n "$root" ] && root_dir=$(cd "$root" 2>/dev/null && pwd); then
+  case $root_dir in */) ;; *) root_dir=$root_dir/ ;; esac
+  doc_rel=$doc_dir/
+  case $doc_rel in
+    "$root_dir"*) base="/${doc_rel#"$root_dir"}" ;;
+  esac
+fi
+
+with_bibliography="{
+  import \"$package\": $call
+  let base = \"$base\"
+  let sources = query(std.bibliography).map(b => b.sources).flatten()
+  let contents = sources.map(s => {
+    if type(s) != str { s } else if s.starts-with(\"/\") { read(s) } else { read(base + s) }
+  })
+  $call(bibliography: contents)
+}"
+
+without_bibliography="{
+  import \"$package\": $call
+  $call(checks: (\"bibliography-not-checked\": false))
+}"
+
+eval_flags="--format $format --input sanity=off"
+
+err=$(mktemp)
+trap 'rm -f "$err"' EXIT INT TERM
+
+if ! out=$(typst eval "$with_bibliography" --in "$doc" $eval_flags "$@" 2>"$err"); then
+  if ! out=$(typst eval "$without_bibliography" --in "$doc" $eval_flags "$@" 2>"$err"); then
+    cat "$err" >&2
+    exit 2
+  fi
+  # the document itself is fine
+  echo "sanity: could not read the bibliography; uncited entries were not checked" >&2
+fi
+
+if [ -s "$err" ]; then
+  cat "$err" >&2
+fi
+
+if [ "$json" = 1 ]; then
+  printf '%s\n' "$out"
+  if printf '%s' "$out" | grep -qE '"severity": *"(warning|error)"'; then
+    exit 1
+  fi
+  exit 0
+fi
+
+case $out in
+  '""' | "''")
+    echo "sanity: nothing to report"
+    exit 0
+    ;;
+esac
+
+# unwrap the YAML block scalar `typst eval` wraps the text in
+text=$(printf '%s\n' "$out" | awk 'NR == 1 && $0 == "|-" { next } { sub(/^  /, ""); print }')
+printf '%s\n' "$text"
+
+if printf '%s\n' "$text" | grep -qE '^(warning|error): '; then
+  exit 1
+fi
+exit 0
