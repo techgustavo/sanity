@@ -151,6 +151,6 @@
     cfg.severities.at(not-checked-id),
     "bibliography entries are not checked; add bibliography: "
       + argument
-      + " to the show rule, or use bin/sanity",
+      + " to the show rule, or run sanity from the command line",
   ),)
 }
