@@ -1,6 +1,6 @@
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/banner-dark.svg" width="100%">
-  <img alt="sanity checks for your Typst documents" src="docs/assets/banner-light.svg" width="100%">
+  <source media="(prefers-color-scheme: dark)" srcset="./docs/assets/banner-dark.svg" width="100%">
+  <img alt="sanity checks for your Typst documents" src="./docs/assets/banner-light.svg" width="100%">
 </picture>
 
 `sanity` reads your compiled document and reports the figures nothing points at, the bibliography entries nothing cites, and the captions and labels that went missing on the way.
