@@ -33,7 +33,12 @@
 
   let orphaned = doc.count + from-bibliography.len()
   findings += ignores
-    .run(exemptions, cfg.bib-keys, cfg)
+    .run(
+      exemptions,
+      cfg.bib-keys,
+      cfg,
+      bibliography-unknown: bibs.len() > 0 and cfg.bib-keys == none,
+    )
     .enumerate()
     .map(((i, f)) => f + (order: orphaned + i))
 
