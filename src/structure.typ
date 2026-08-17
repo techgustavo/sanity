@@ -7,7 +7,7 @@
 
   let groups = (:)
   for elem in elements {
-    if elem.target == none or not elem.numbered { continue }
+    if elem.target == none { continue }
     groups.insert(elem.target, groups.at(elem.target, default: ()) + (elem,))
   }
 
