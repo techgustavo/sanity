@@ -85,7 +85,13 @@
 
     let func = elem.func()
     if func == std.image {
-      images.push(common + (noun: "image"))
+      // the file it came from is what sends an author to the right line, and
+      // an image assembled out of bytes has none
+      let src = elem.at("source", default: none)
+      images.push(common + (
+        noun: "image",
+        source: if type(src) == str { src } else { none },
+      ))
     } else if func == std.table {
       tables.push(common + (noun: "table"))
     } else {

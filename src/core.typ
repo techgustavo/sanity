@@ -97,6 +97,8 @@
 #let describe(elem) = {
   if elem.target != none {
     elem.noun + " <" + elem.target + ">"
+  } else if elem.at("source", default: none) != none {
+    elem.noun + " " + repr(elem.source)
   } else if elem.page-label != none {
     elem.noun + " on page " + elem.page-label
   } else {
