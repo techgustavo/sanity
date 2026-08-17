@@ -33,6 +33,8 @@
   "heading-level-skip": true,
   "missing-caption": true,
   "empty-caption": true,
+  "missing-label": false,
+  "duplicate-caption": false,
   "uncited-entry": true,
   "bibliography-not-checked": true,
   "orphaned-ignore": true,
@@ -51,6 +53,8 @@
   "heading-level-skip": "warning",
   "missing-caption": "warning",
   "empty-caption": "warning",
+  "missing-label": "warning",
+  "duplicate-caption": "warning",
   "uncited-entry": "warning",
   "bibliography-not-checked": "info",
   "orphaned-ignore": "warning",
@@ -88,6 +92,27 @@
 }
 
 #let _whitespace = ("space", "linebreak", "parbreak", "h", "v")
+
+#let _breaks = ("space", "linebreak", "parbreak")
+
+#let text-of(it) = {
+  if it == none { return "" }
+  if type(it) == str { return it }
+  if type(it) != content { return "" }
+
+  if it.has("text") { return it.text }
+  if it.has("children") { return it.children.map(text-of).join("") }
+  if it.has("body") and it.body != none { return text-of(it.body) }
+
+  let func = repr(it.func())
+  // an apostrophe is a letter's business, and a caption reads badly without it
+  if func == "smartquote" { return if it.double { "\"" } else { "'" } }
+  if func in _breaks { " " } else { "" }
+}
+
+#let _runs = regex("\\s+")
+
+#let comparable(it) = text-of(it).replace(_runs, " ").trim()
 
 /// whether a piece of content says nothing at all
 #let blank(it) = {
