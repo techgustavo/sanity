@@ -4,7 +4,7 @@
 #import "src/engine.typ" as _engine
 #import "src/report.typ" as _report
 
-#let _reporting-only() = sys.inputs.at("sanity", default: none) == "report"
+#let _mode() = sys.inputs.at("sanity", default: none)
 
 #let _config-in-effect(bibliography, checks, severities) = {
   let stored = _collect.stored-config()
@@ -29,6 +29,11 @@
   report: auto,
   strict: false,
 ) = {
+  assert(
+    report == auto or report == none,
+    message: "sanity: report must be auto or none",
+  )
+
   let cfg = _core.config(
     checks: checks,
     severities: severities,
@@ -47,13 +52,19 @@
   [#metadata(none) <sanity-end>]
 
   context {
-    let result = _engine.analyse(cfg)
-    if strict and _core.blocking(result.findings) and not _reporting-only() {
-      panic(_report.format-text(result.findings))
-    }
+    let mode = _mode()
     let outermost = query(selector(<sanity-end>).after(here())).len() == 0
-    if report == auto and outermost {
-      _report.appended-report(result.findings, locations: result.locations)
+    let will-panic = strict and mode not in ("report", "off")
+    let will-report = report == auto and outermost and mode != "off"
+
+    if will-panic or will-report {
+      let result = _engine.analyse(cfg)
+      if will-panic and _core.blocking(result.findings) {
+        panic(_report.format-text(result.findings))
+      }
+      if will-report {
+        _report.appended-report(result.findings, locations: result.locations)
+      }
     }
   }
 }
