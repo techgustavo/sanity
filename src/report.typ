@@ -1,4 +1,4 @@
-#import "core.typ": severity-order
+#import "core.typ": severity-order, version
 #import "collect.typ": paged
 
 #let _plurals = (info: "info", warning: "warnings", error: "errors")
@@ -31,10 +31,29 @@
 }
 
 #let _colors = (
-  info: rgb("#5481c4"),
-  warning: rgb("#d8a926"),
-  error: rgb("#dc2d21"),
+  info: rgb("#608FEA"),
+  warning: rgb("#FFBB3E"),
+  error: rgb("#F06262"),
 )
+
+/// a tint of a colour
+#let wash(colour) = {
+  let target = 97%
+  let alpha = (100% - target) / (100% - luma(colour).components().first())
+  colour.transparentize((1 - alpha) * 100%)
+}
+
+#let _pill(severity) = {
+  let colour = _colors.at(severity)
+  box(
+    width: 38pt,
+    fill: wash(colour),
+    inset: (x: 0pt, y: 2pt),
+    outset: (y: 3pt),
+    radius: 2pt,
+    align(center, text(size: 0.85em, fill: colour, severity)),
+  )
+}
 
 /// the page a finding sits on
 #let _where(f, locations) = {
@@ -47,10 +66,21 @@
 }
 
 #let _body(findings, locations) = [
-  #set text(font: ("DejaVu Sans Mono",), size: 8.5pt, fill: rgb("#1c1c1c"))
-  #set par(justify: false, leading: 0.55em)
+  #set text(
+    font: ("DejaVu Sans Mono",),
+    size: 8.5pt,
+    fill: rgb("#1c1c1c"),
+    lang: "en",
+    dir: ltr,
+  )
+  #set par(justify: false, leading: 0.55em, spacing: 0.9em)
+  #set align(left + top)
 
-  #text(weight: "bold")[sanity] #h(0.6em) #text(fill: _colors.info, summary(findings))
+  #text(weight: "bold")[sanity]
+  #h(0.35em)
+  #text(fill: rgb("#8b9096"))[v#version]
+  #h(0.6em)
+  #text(fill: _colors.info, summary(findings))
   #line(length: 100%, stroke: 0.4pt + rgb("#c8ccd2"))
   #v(0.4em)
 
@@ -60,7 +90,7 @@
     row-gutter: 0.7em,
     ..for f in findings {
       (
-        text(fill: _colors.at(f.severity), f.severity),
+        _pill(f.severity),
         [
           #f.message \
           #text(fill: _colors.info, size: 0.85em, f.id)
@@ -69,9 +99,14 @@
       )
     }
   )
+
+  #v(1.2em)
+  #text(size: 0.85em, fill: rgb("#8b9096"))[
+    sanity added this page; report: none, or \--input sanity=off, leaves it out.
+  ]
 ]
 
-/// the same findings, appended to the document
+/// the same findings appended to the document
 #let appended-report(findings, locations: (:)) = {
   if findings.len() == 0 { return none }
 
@@ -81,6 +116,9 @@
       header: none,
       footer: none,
       numbering: none,
+      fill: white,
+      background: none,
+      foreground: none,
       _body(findings, locations),
     )
   } else {

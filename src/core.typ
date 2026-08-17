@@ -1,3 +1,5 @@
+#let version = "0.1.0"
+
 #let severity-order = ("info", "warning", "error")
 
 #let finding(
