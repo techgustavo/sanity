@@ -1,0 +1,4 @@
+warning: figure <fig:beta> is never referenced [unreferenced-figure]
+  ┌─ page 1
+
+sanity: 1 warning

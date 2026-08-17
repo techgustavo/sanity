@@ -1,0 +1,4 @@
+warning: bibliography entry "beta" is never cited [uncited-entry]
+warning: bibliography entry "delta" is never cited [uncited-entry]
+
+sanity: 2 warnings

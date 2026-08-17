@@ -1,0 +1,4 @@
+warning: footnote <fn:more> is never referenced [unreferenced-footnote]
+  ┌─ page 1
+
+sanity: 1 warning

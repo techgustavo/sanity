@@ -1,0 +1,4 @@
+warning: figure <fig:cover> has an empty caption [empty-caption]
+  ┌─ page 1
+
+sanity: 1 warning

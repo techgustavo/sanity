@@ -1,0 +1,3 @@
+warning: sanity-ignore names <fig:covr>, which is not in the document (typo in the label) [orphaned-ignore]
+
+sanity: 1 warning

@@ -1,0 +1,4 @@
+warning: table on page 1 has no header row [table-without-header]
+  ┌─ page 1
+
+sanity: 1 warning

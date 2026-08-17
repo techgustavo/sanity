@@ -1,0 +1,8 @@
+warning: listing <lst:main> is never referenced [unreferenced-listing]
+  ┌─ page 1
+warning: figure <fig:panel> is never referenced [unreferenced-figure]
+  ┌─ page 1
+warning: algorithm <alg:sort> is never referenced [unreferenced-figure]
+  ┌─ page 1
+
+sanity: 3 warnings

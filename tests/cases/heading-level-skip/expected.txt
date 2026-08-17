@@ -1,0 +1,4 @@
+warning: heading on page 1 jumps from level 1 to level 3 [heading-level-skip]
+  ┌─ page 1
+
+sanity: 1 warning

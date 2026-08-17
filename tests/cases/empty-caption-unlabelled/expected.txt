@@ -1,0 +1,6 @@
+warning: figure on page 1 has an empty caption [empty-caption]
+  ┌─ page 1
+warning: figure on page 1 has an empty caption [empty-caption]
+  ┌─ page 1
+
+sanity: 2 warnings

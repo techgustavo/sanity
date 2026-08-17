@@ -1,0 +1,3 @@
+info: bibliography entries are not checked; add bibliography: read("refs.bib") to the show rule, or run sanity from the command line [bibliography-not-checked]
+
+sanity: 1 info

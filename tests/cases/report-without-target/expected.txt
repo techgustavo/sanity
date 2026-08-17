@@ -1,0 +1,10 @@
+warning: heading on page 1 jumps from level 1 to level 3 [heading-level-skip]
+  ┌─ page 1
+warning: figure on page 1 has an empty caption [empty-caption]
+  ┌─ page 1
+warning: figure "Captioned, unlabelled" has no label [missing-label]
+  ┌─ page 1
+warning: table on page 1 has no header row [table-without-header]
+  ┌─ page 1
+
+sanity: 4 warnings

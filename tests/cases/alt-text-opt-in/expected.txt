@@ -1,0 +1,4 @@
+warning: image "map.svg" has no alt text [missing-alt-text]
+  ┌─ page 1
+
+sanity: 1 warning

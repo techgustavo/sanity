@@ -1,0 +1,8 @@
+warning: figure "Discussed at length" has no label [missing-label]
+  ┌─ page 1
+warning: figure "A caption long enough that the message would " .. has no label [missing-label]
+  ┌─ page 1
+warning: figure "The reader's own words" has no label [missing-label]
+  ┌─ page 1
+
+sanity: 3 warnings

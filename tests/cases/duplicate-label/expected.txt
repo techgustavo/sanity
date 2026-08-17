@@ -1,0 +1,6 @@
+warning: figure <fig:twice> is never referenced [unreferenced-figure]
+  ┌─ page 1
+error: label <fig:twice> is attached to 2 elements [duplicate-label]
+  ┌─ page 1
+
+sanity: 1 error, 1 warning

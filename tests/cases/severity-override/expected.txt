@@ -1,0 +1,6 @@
+info: figure <fig:quiet> is never referenced [unreferenced-figure]
+  ┌─ page 1
+error: figure <fig:bare> has no caption [missing-caption]
+  ┌─ page 1
+
+sanity: 1 error, 1 info

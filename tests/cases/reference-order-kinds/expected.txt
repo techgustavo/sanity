@@ -1,0 +1,4 @@
+warning: table <tab:a> is numbered before <tab:b> but first referenced after it [reference-order]
+  ┌─ page 1
+
+sanity: 1 warning

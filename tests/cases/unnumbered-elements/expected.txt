@@ -1,0 +1,8 @@
+warning: equation <eq:numbered> is never referenced [unreferenced-equation]
+  ┌─ page 1
+warning: heading <sec:numbered> is never referenced [unreferenced-heading]
+  ┌─ page 1
+warning: figure <fig:numbered> is never referenced [unreferenced-figure]
+  ┌─ page 1
+
+sanity: 3 warnings

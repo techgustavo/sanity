@@ -1,0 +1,5 @@
+warning: figure <fig:orphan> is never referenced [unreferenced-figure]
+  ┌─ page 1
+info: bibliography entries are not checked; add bibliography: read("works-cited.bib") to the show rule, or run sanity from the command line [bibliography-not-checked]
+
+sanity: 1 warning, 1 info

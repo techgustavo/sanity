@@ -1,0 +1,10 @@
+warning: figure <fig:unused> is never referenced [unreferenced-figure]
+  ┌─ page 1
+warning: table <tab:unused> is never referenced [unreferenced-table]
+  ┌─ page 1
+warning: listing <lst:unused> is never referenced [unreferenced-listing]
+  ┌─ page 1
+warning: equation <eq:euler> is never referenced [unreferenced-equation]
+  ┌─ page 1
+
+sanity: 4 warnings

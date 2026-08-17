@@ -1,0 +1,4 @@
+error: label <sec:intro> is attached to 2 elements [duplicate-label]
+  ┌─ page 1
+
+sanity: 1 error

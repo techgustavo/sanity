@@ -1,0 +1,4 @@
+warning: heading <sec:unused> is never referenced [unreferenced-heading]
+  ┌─ page 1
+
+sanity: 1 warning

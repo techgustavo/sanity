@@ -1,0 +1,3 @@
+warning: bibliography entry "unused2020" is never cited [uncited-entry]
+
+sanity: 1 warning
