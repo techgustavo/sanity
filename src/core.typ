@@ -32,6 +32,8 @@
   "unreferenced-heading": false,
   "duplicate-label": true,
   "heading-level-skip": true,
+  // a rule of the journals that number by first mention
+  "reference-order": false,
   "missing-caption": true,
   "empty-caption": true,
   "missing-label": false,
@@ -53,6 +55,7 @@
   // a duplicated label makes every reference to it a hard compile error
   "duplicate-label": "error",
   "heading-level-skip": "warning",
+  "reference-order": "warning",
   "missing-caption": "warning",
   "empty-caption": "warning",
   "missing-label": "warning",

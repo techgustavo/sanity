@@ -10,10 +10,23 @@
   "figure"
 }
 
-#let referenced-labels() = {
-  let from-refs = query(std.ref).map(r => str(r.target))
-  let from-links = query(link).filter(l => type(l.dest) == label).map(l => str(l.dest))
-  (from-refs + from-links).dedup()
+#let references() = {
+  let labels = (:)
+  let order = ()
+  for elem in query(selector(std.ref).or(link)) {
+    let target = if elem.func() == std.ref {
+      str(elem.target)
+    } else if type(elem.dest) == label {
+      str(elem.dest)
+    } else {
+      none
+    }
+    if target == none { continue }
+
+    labels.insert(target, true)
+    order.push(target)
+  }
+  (labels: labels, order: order)
 }
 
 // everything Typst will let you write `@label` for

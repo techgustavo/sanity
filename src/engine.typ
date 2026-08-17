@@ -1,5 +1,6 @@
 #import "collect.typ"
 #import "references.typ"
+#import "order.typ"
 #import "structure.typ"
 #import "captions.typ"
 #import "citations.typ"
@@ -9,11 +10,12 @@
 #let analyse(cfg) = {
   let doc = collect.collected()
   let elements = doc.elements
-  let referenced = collect.referenced-labels()
+  let refs = collect.references()
   let bibs = collect.bibliographies()
 
   let findings = ()
-  findings += references.run(elements, referenced, cfg)
+  findings += references.run(elements, refs.labels, cfg)
+  findings += order.run(elements, refs.order, cfg)
   findings += structure.run(elements, cfg)
   findings += captions.run(elements, cfg)
   findings += accessibility.run(doc.images, doc.tables, cfg)
