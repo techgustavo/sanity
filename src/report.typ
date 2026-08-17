@@ -17,14 +17,13 @@
   if parts.len() == 0 { "no issues" } else { parts.join(", ") }
 }
 
-/// one finding per line
 #let format-text(findings) = {
   if findings.len() == 0 { return "" }
 
   let lines = ()
   for f in findings {
     lines.push(f.severity + ": " + f.message + " [" + f.id + "]")
-    if f.page-label != none { lines.push("  --> page " + f.page-label) }
+    if f.page-label != none { lines.push("  ┌─ page " + f.page-label) }
   }
   lines.push("")
   lines.push("sanity: " + summary(findings))
