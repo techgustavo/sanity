@@ -41,7 +41,9 @@
 #let _where(f, locations) = {
   if f.page-label == none { return [] }
   let label = "page " + f.page-label
-  let loc = locations.at(f.target, default: none)
+  let loc = if f.target == none { none } else {
+    locations.at(f.target, default: none)
+  }
   text(fill: _colors.info, if loc == none { label } else { link(loc, label) })
 }
 
