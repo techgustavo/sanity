@@ -58,14 +58,28 @@
   }
 }
 
-/// silence every finding about the given labels
-///
+/// silence findings about the given labels
 /// ```typ
 /// #sanity-ignore(<fig:cover>, reason: "decorative")
+/// #sanity-ignore(<fig:map>, checks: "unreferenced-figure")
 /// ```
-#let sanity-ignore(..targets, reason: none) = {
+#let sanity-ignore(..targets, reason: none, checks: none) = {
+  assert(
+    reason == none or type(reason) == str,
+    message: "sanity: reason must be a string",
+  )
+
+  let ids = if type(checks) == str { (checks,) } else { checks }
+  if ids != none {
+    assert(
+      type(ids) == array,
+      message: "sanity: checks takes a check id or an array of them",
+    )
+    _core.assert-known(ids)
+  }
+
   for target in targets.pos() {
-    [#metadata((target: str(target), reason: reason)) <sanity-ignore>]
+    [#metadata((target: str(target), reason: reason, checks: ids)) <sanity-ignore>]
   }
 }
 

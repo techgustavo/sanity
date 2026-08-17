@@ -67,11 +67,19 @@
   "table-without-header": "warning",
 )
 
-// a typo in a check id would otherwise turn a check off in silence
-#let config(checks: (:), severities: (:), bib-keys: none) = {
-  for id in checks.keys() + severities.keys() {
-    assert(id in default-checks, message: "sanity: no such check: " + id)
+// a typo in a check id would otherwise turn a check off, or silence one, in
+// silence
+#let assert-known(ids) = {
+  for id in ids {
+    assert(
+      type(id) == str and id in default-checks,
+      message: "sanity: no such check: " + repr(id),
+    )
   }
+}
+
+#let config(checks: (:), severities: (:), bib-keys: none) = {
+  assert-known(checks.keys() + severities.keys())
   for (id, level) in severities {
     assert(
       level in severity-order,

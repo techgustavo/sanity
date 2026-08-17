@@ -7,6 +7,13 @@
 #import "accessibility.typ"
 #import "ignores.typ"
 
+/// whether the author asked to hear nothing about this finding
+#let _silenced(f, ignored) = {
+  if f.target == none or f.target not in ignored { return false }
+  let ids = ignored.at(f.target)
+  ids == none or f.id in ids
+}
+
 #let analyse(cfg) = {
   let doc = collect.collected()
   let elements = doc.elements
@@ -30,8 +37,16 @@
   findings += from-bibliography.enumerate().map(((i, f)) => f + (order: doc.count + i))
 
   let exemptions = collect.ignores()
-  let ignored = exemptions.map(i => i.target).dedup()
-  findings = findings.filter(f => f.target == none or f.target not in ignored)
+  let ignored = (:)
+  for entry in exemptions {
+    let ids = entry.at("checks", default: none)
+    if entry.target in ignored {
+      let already = ignored.at(entry.target)
+      ids = if already == none or ids == none { none } else { already + ids }
+    }
+    ignored.insert(entry.target, ids)
+  }
+  findings = findings.filter(f => not _silenced(f, ignored))
 
   let orphaned = doc.count + from-bibliography.len()
   findings += ignores
