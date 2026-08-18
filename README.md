@@ -1,6 +1,6 @@
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="./docs/assets/banner-dark.svg" width="100%">
-  <img alt="sanity checks for your Typst documents" src="./docs/assets/banner-light.svg" width="100%">
+  <source media="(prefers-color-scheme: dark)" srcset="https://github.com/techgustavo/sanity/raw/main/docs/assets/banner-dark.svg">
+  <img alt="sanity checks for your Typst documents" src="docs/assets/banner-light.svg" width="100%">
 </picture>
 
 `sanity` reads your compiled document and reports the figures nothing points at, the bibliography entries nothing cites, and the captions and labels that went missing on the way.
@@ -16,64 +16,18 @@ These two lines are *basically* what you need to use the package. When there is 
 <img alt="Six findings, each with its severity, its message, the id of the check that made it, and a link to the page it is on." src="docs/assets/report.svg" width="100%">
 
 > [!NOTE]
-> Needs Typst 0.14 or newer. The command line script additionally needs 0.15, (`typst eval` is required).
+> Needs Typst 0.14 or newer. The command line script additionally needs 0.15, since it uses `typst eval`.
 
 ## Manual
 
 It is worth checking [docs/manual.pdf](docs/manual.pdf) for package details. It contains a description of each check (what it reports and where it sets the threshold) as well as the full configuration, exceptions, command-line usage, and how everything works.
 
 This page is the short version, you can check out
-[recipes](#recipes) ·
 [what it checks](#what-it-checks) ·
 [bibliography](#bibliography) ·
 [the command line](#from-the-command-line) ·
-[CI](#in-ci)
-
-## Recipes
-
-The import and the show rule above are the whole of what is required. Everything here is something you may never need.
-
-**Check a document without touching it**, with the [one-file script](#from-the-command-line):
-
-```
-bin/sanity paper.typ
-```
-
-**Check the bibliography too.** A package cannot open your `.bib`, so the document hands the data over:
-
-```typst
-#show: sanity.with(bibliography: read("refs.bib"))
-```
-
-**Let one figure go unreferenced**, because it is meant to:
-
-```typst
-#sanity-ignore(<fig:cover>, reason: "decorative")
-```
-
-**Silence one check on one element**, rather than everything about it:
-
-```typst
-#sanity-ignore(<fig:map>, checks: "unreferenced-figure")
-```
-
-**Turn a check on or off**, by the id from the table below:
-
-```typst
-#show: sanity.with(checks: ("reference-order": true, "empty-caption": false))
-```
-
-**Fail the compilation instead of appending a page**, which is what CI wants:
-
-```typst
-#show: sanity.with(strict: true)
-```
-
-**Get the plain PDF back**, without editing the source:
-
-```
-typst compile --input sanity=off paper.typ
-```
+[CI](#in-ci) ·
+[recipes](#recipes)
 
 ## What it checks
 
@@ -114,7 +68,9 @@ chmod +x sanity
 
 ## In CI
 
-1 on a warning or an error, 0 otherwise, and 2 when the document itself does not compile. Any step that puts `typst` on the path will do:
+There are two ways to gate a build on `sanity`, and you only need one of them.
+
+**The script**, which leaves the document alone. It exits `1` on a warning or an error, `0` when there is nothing to report, and `2` when the document does not compile, so a pull request that breaks a cross-reference stops coming back green:
 
 ```yaml
 name: manuscript
@@ -132,6 +88,91 @@ jobs:
           ./sanity paper.typ
 ```
 
-`strict: true` in the document makes the compilation itself fails, so `typst compile` gates the build and no script is needed.
+**Or `strict: true`** in the document, which makes the compilation itself fail. Then `typst compile` gates the build on its own and there is no script to download:
+
+```yaml
+      - run: typst compile paper.typ
+```
+
+## Recipes
+
+<details>
+<summary>Check a document without touching it</summary>
+
+With the [one-file script](#from-the-command-line)
+
+```
+bin/sanity paper.typ
+```
+
+</details>
+
+<details>
+<summary>Check the bibliography too</summary>
+
+A package cannot open your `.bib`, so the document hands the data over
+
+```typst
+#show: sanity.with(bibliography: read("refs.bib"))
+```
+
+</details>
+
+<details>
+<summary>Let one figure go unreferenced</summary>
+
+This one is decorative, so nothing is ever going to point at it
+
+```typst
+#sanity-ignore(<fig:cover>, reason: "decorative")
+```
+
+</details>
+
+<details>
+<summary>Silence one check on one element</summary>
+
+The element stays under every other check
+
+```typst
+#sanity-ignore(<fig:map>, checks: "unreferenced-figure")
+```
+
+</details>
+
+<details>
+<summary>Turn a check on or off</summary>
+
+By the id, which the [manual](docs/manual.pdf) lists for each check
+
+```typst
+#show: sanity.with(checks: ("reference-order": true, "empty-caption": false))
+```
+
+</details>
+
+<details>
+<summary>Fail the compilation instead of appending a page</summary>
+
+Which is what [CI](#in-ci) wants
+
+```typst
+#show: sanity.with(strict: true)
+```
+
+</details>
+
+<details>
+<summary>Get the plain PDF back</summary>
+
+No edit to the source, just the one input
+
+```
+typst compile --input sanity=off paper.typ
+```
+
+</details>
+
+---
 
 **License:** MIT.
