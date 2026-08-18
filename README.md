@@ -1,9 +1,9 @@
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://github.com/techgustavo/sanity/raw/main/docs/assets/banner-dark.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/banner-dark.svg" width="100%">
   <img alt="sanity checks for your Typst documents" src="docs/assets/banner-light.svg" width="100%">
 </picture>
 
-`sanity` reads your compiled document and reports the figures nothing points at, the bibliography entries nothing cites, and the captions and labels that went missing on the way.
+`sanity` is a simple package to find unreferenced figures, uncited sources and lost labels.
 
 ```typst
 #import "@preview/sanity:0.1.0": *
@@ -11,7 +11,7 @@
 #show: sanity
 ```
 
-These two lines are *basically* what you need to use the package. When there is nothing to report, the compiled PDF is byte for byte the one you would have got without `sanity`. When there is, a page is appended listing what turned up, just like this:
+With these lines, whenever there is something to report, a page is attached listing what was found, just like this:
 
 <img alt="Six findings, each with its severity, its message, the id of the check that made it, and a link to the page it is on." src="docs/assets/report.svg" width="100%">
 
@@ -20,34 +20,33 @@ These two lines are *basically* what you need to use the package. When there is 
 
 ## Manual
 
-It is worth checking [docs/manual.pdf](docs/manual.pdf) for package details. It contains a description of each check (what it reports and where it sets the threshold) as well as the full configuration, exceptions, command-line usage, and how everything works.
+It is worth checking [docs/manual.pdf](docs/manual.pdf) for package details. It contains a description of each check (what it reports) as well as the configuration and exceptions.
 
-This page is the short version, you can check out
-[what it checks](#what-it-checks) ·
-[bibliography](#bibliography) ·
-[the command line](#from-the-command-line) ·
-[CI](#in-ci) ·
-[recipes](#recipes)
+On this page you can *check* out
+[what it checks](#what-it-checks),
+[bibliography](#bibliography),
+[the command line](#from-the-command-line) and
+[recipes](#recipes).
 
 ## What it checks
 
-Twelve checks are performed by default as soon as you apply the `show` rule, including checks for figures, tables, listings, and equations, and many others.
+Twelve checks are performed by default as soon as you apply the `show` rule, including checks for figures, tables, listings, and equations, and others. Only elements you labelled yourself are reported as unreferenced. An unlabelled figure cannot be pointed at and is *often* decorative.
 
-Only elements you labelled yourself are reported as unreferenced, since an unlabelled figure cannot be pointed at and is often decorative. The [manual](docs/manual.pdf) gives each check an entry of its own.
+The [manual](docs/manual.pdf) gives each check an entry of its own.
 
 ## Bibliography
 
-`uncited-entry` needs the bibliography data, and a package cannot read your `.bib`. From the command line `bin/sanity` reads it for you; inside the document, hand it over:
+`uncited-entry` needs the bibliography data, and a package cannot read your `.bib`. [From the command line](#from-the-command-line), `bin/sanity` reads it for you. But inside the document you can hand it over:
 
 ```typst
 #show: sanity.with(bibliography: read("refs.bib"))
 ```
 
-[BibTeX](https://www.bibtex.org/Format/) and [Hayagriva](https://github.com/typst/hayagriva/blob/main/docs/file-format.md) files are both understood, and an array covers a document with more than one bibliography. Without the data `sanity` says so, at `info` severity, which prints and never fails a build.
+[BibTeX](https://www.bibtex.org/Format/) and [Hayagriva](https://github.com/typst/hayagriva/blob/main/docs/file-format.md) files are both understood.
 
 ## From the command line
 
-The [`bin/sanity`](https://github.com/techgustavo/sanity/blob/main/bin/sanity) script reports on a document without touching it, reads its bibliography for it, and exits non-zero on a warning or an error.
+You can use [`bin/sanity`](https://github.com/techgustavo/sanity/blob/main/bin/sanity) script (and it reports on a document without touching it). It exits `1` on a warning/error, `0` when there is nothing to report, and `2` when the document does not compile.
 
 ```
 $ bin/sanity paper.typ
@@ -57,7 +56,7 @@ warning: figure <fig:latency> is never referenced [unreferenced-figure]
 sanity: 1 warning
 ```
 
-It lives here rather than in the published package, since a package cannot ship an executable:
+You can download it here instead, since packages can't include executables.
 
 ```
 curl -sSLO https://raw.githubusercontent.com/techgustavo/sanity/main/bin/sanity
@@ -65,34 +64,6 @@ chmod +x sanity
 ```
 
 `--help` lists the flags.
-
-## In CI
-
-There are two ways to gate a build on `sanity`, and you only need one of them.
-
-**The script**, which leaves the document alone. It exits `1` on a warning or an error, `0` when there is nothing to report, and `2` when the document does not compile, so a pull request that breaks a cross-reference stops coming back green:
-
-```yaml
-name: manuscript
-on: [push, pull_request]
-
-jobs:
-  sanity:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: typst-community/setup-typst@v5
-      - run: |
-          curl -sSLO https://raw.githubusercontent.com/techgustavo/sanity/main/bin/sanity
-          chmod +x sanity
-          ./sanity paper.typ
-```
-
-**Or `strict: true`** in the document, which makes the compilation itself fail. Then `typst compile` gates the build on its own and there is no script to download:
-
-```yaml
-      - run: typst compile paper.typ
-```
 
 ## Recipes
 
@@ -154,8 +125,6 @@ By the id, which the [manual](docs/manual.pdf) lists for each check
 <details>
 <summary>Fail the compilation instead of appending a page</summary>
 
-Which is what [CI](#in-ci) wants
-
 ```typst
 #show: sanity.with(strict: true)
 ```
@@ -163,12 +132,24 @@ Which is what [CI](#in-ci) wants
 </details>
 
 <details>
-<summary>Get the plain PDF back</summary>
+<summary>Gate a pull request on the findings</summary>
 
-No edit to the source, just the one input
+A workflow that fails when the manuscript does
 
-```
-typst compile --input sanity=off paper.typ
+```yaml
+name: manuscript
+on: [push, pull_request]
+
+jobs:
+  sanity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: typst-community/setup-typst@v5
+      - run: |
+          curl -sSLO https://raw.githubusercontent.com/techgustavo/sanity/main/bin/sanity
+          chmod +x sanity
+          ./sanity paper.typ
 ```
 
 </details>
