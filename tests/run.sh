@@ -308,9 +308,7 @@ if [[ $mode == eval ]] && wanted cli; then
 fi
 
 if wanted manual; then
-  if err=$(typst compile --root "$root" \
-    --font-path "$root/docs/fonts" --ignore-system-fonts \
-    -f pdf "$root/docs/manual.typ" /dev/null 2>&1); then
+  if err=$(typst compile --root "$root" -f pdf "$root/docs/manual.typ" /dev/null 2>&1); then
     ok manual
   else
     failed manual "the manual does not build"
