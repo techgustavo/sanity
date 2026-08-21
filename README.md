@@ -3,7 +3,9 @@
   <img alt="sanity checks for your Typst documents" src="docs/assets/banner-light.svg" width="100%">
 </picture>
 
-`sanity` is a simple package to find unreferenced figures, uncited sources and lost labels.
+[![Manual](https://img.shields.io/badge/manual-PDF-608FEA)](docs/manual.pdf)
+
+`sanity` is a simple Typst package to find unreferenced figures, uncited sources and lost labels.
 
 ```typst
 #import "@preview/sanity:0.1.0": *
@@ -23,7 +25,7 @@ With these lines, whenever there is something to report, a page is attached list
 It is worth checking [docs/manual.pdf](docs/manual.pdf) for package details. It contains a description of each check (what it reports) as well as the configuration and exceptions.
 
 On this page you can *check* out
-[what it checks](#what-it-checks),
+[what it _checks_](#what-it-checks),
 [bibliography](#bibliography),
 [the command line](#from-the-command-line) and
 [recipes](#recipes).
@@ -46,7 +48,7 @@ The [manual](docs/manual.pdf) gives each check an entry of its own.
 
 ## From the command line
 
-You can use [`bin/sanity`](https://github.com/techgustavo/sanity/blob/main/bin/sanity) script (and it reports on a document without touching it). It exits `1` on a warning/error, `0` when there is nothing to report, and `2` when the document does not compile.
+You can also use [`bin/sanity`](https://github.com/techgustavo/sanity/blob/main/bin/sanity) script (and it reports on a document without touching it). It exits `1` on a warning/error, `0` when there is nothing to report, and `2` when the document does not compile.
 
 ```
 $ bin/sanity paper.typ
@@ -156,4 +158,4 @@ jobs:
 
 ---
 
-**License:** MIT.
+Thank you for considering this package.
