@@ -38,4 +38,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - run: docker run --rm -v "$PWD:/data" ghcr.io/typst/package-check check
+
+      - run: |
+          set -eu
+          mkdir -p /tmp/package
+          git archive HEAD | tar -x -C /tmp/package
+          docker run --rm -v /tmp/package:/data ghcr.io/typst/package-check check
