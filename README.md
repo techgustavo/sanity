@@ -19,11 +19,12 @@ With these lines, whenever there is something to report, a page is attached list
 
 <img alt="Six findings, each with its severity, its message, the id of the check that made it, and a link to the page it is on." src="docs/assets/report.svg" width="100%">
 
+> [!NOTE]
 > Needs Typst 0.14 or newer. The command line script additionally needs 0.15, since it uses `typst eval`.
 
 ## Manual
 
-It is worth checking [docs/manual.pdf](docs/manual.pdf) for package details. It contains a description of each check (what it reports) as well as the configuration and exceptions.
+It is worth checking [docs/manual.pdf](docs/manual.pdf) for package details. It contains a description of each check (what it reports) as well as the configuration and exceptions!
 
 On this page you can *check* out
 [what it _checks_](#what-it-checks),
@@ -159,4 +160,4 @@ jobs:
 
 ---
 
-Thank you for considering this package!
+Thanks for considering this package!
