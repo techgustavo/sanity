@@ -19,7 +19,6 @@ With these lines, whenever there is something to report, a page is attached list
 
 <img alt="Six findings, each with its severity, its message, the id of the check that made it, and a link to the page it is on." src="docs/assets/report.svg" width="100%">
 
-> [!NOTE]
 > Needs Typst 0.14 or newer. The command line script additionally needs 0.15, since it uses `typst eval`.
 
 ## Manual
