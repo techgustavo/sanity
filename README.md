@@ -49,7 +49,7 @@ The [manual](docs/manual.pdf) gives each check an entry of its own.
 
 ## From the command line
 
-You can also use [`bin/sanity`](https://github.com/techgustavo/sanity/blob/main/bin/sanity) script (and it reports on a document without touching it). It exits `1` on a warning/error, `0` when there is nothing to report, and `2` when the document does not compile.
+You can also use [`bin/sanity`](https://github.com/techgustavo/sanity/blob/v0.1.0/bin/sanity) script (and it reports on a document without touching it). It exits `1` on a warning/error, `0` when there is nothing to report, and `2` when the document does not compile.
 
 ```console
 $ bin/sanity paper.typ
