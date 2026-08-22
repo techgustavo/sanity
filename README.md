@@ -3,7 +3,9 @@
   <img alt="sanity checks for your Typst documents" src="docs/assets/banner-light.svg" width="100%">
 </picture>
 
-[![Manual](https://img.shields.io/badge/manual-PDF-608FEA)](docs/manual.pdf)
+[![Manual, as a PDF](https://img.shields.io/badge/Manual-PDF-608FEA)](docs/manual.pdf)
+[![GitHub repository](https://img.shields.io/badge/GitHub-Repository-608FEA?logo=github)](https://github.com/techgustavo/sanity)
+
 
 `sanity` is a simple Typst package to find unreferenced figures, uncited sources and lost labels.
 
@@ -17,7 +19,6 @@ With these lines, whenever there is something to report, a page is attached list
 
 <img alt="Six findings, each with its severity, its message, the id of the check that made it, and a link to the page it is on." src="docs/assets/report.svg" width="100%">
 
-> [!NOTE]
 > Needs Typst 0.14 or newer. The command line script additionally needs 0.15, since it uses `typst eval`.
 
 ## Manual
@@ -44,13 +45,13 @@ The [manual](docs/manual.pdf) gives each check an entry of its own.
 #show: sanity.with(bibliography: read("refs.bib"))
 ```
 
-[BibTeX](https://www.bibtex.org/Format/) and [Hayagriva](https://github.com/typst/hayagriva/blob/main/docs/file-format.md) files are both understood.
+[BibTeX](https://www.bibtex.org/Format/) and [Hayagriva](https://github.com/typst/hayagriva/blob/v0.10.1/docs/file-format.md) files are both understood.
 
 ## From the command line
 
 You can also use [`bin/sanity`](https://github.com/techgustavo/sanity/blob/main/bin/sanity) script (and it reports on a document without touching it). It exits `1` on a warning/error, `0` when there is nothing to report, and `2` when the document does not compile.
 
-```
+```console
 $ bin/sanity paper.typ
 warning: figure <fig:latency> is never referenced [unreferenced-figure]
   ┌─ page 4
@@ -60,7 +61,7 @@ sanity: 1 warning
 
 You can download it here instead, since packages can't include executables.
 
-```
+```sh
 curl -sSLO https://raw.githubusercontent.com/techgustavo/sanity/main/bin/sanity
 chmod +x sanity
 ```
@@ -74,7 +75,7 @@ chmod +x sanity
 
 With the [one-file script](#from-the-command-line)
 
-```
+```sh
 bin/sanity paper.typ
 ```
 
@@ -158,4 +159,4 @@ jobs:
 
 ---
 
-Thank you for considering this package.
+Thank you for considering this package!
