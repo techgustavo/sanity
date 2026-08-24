@@ -5,6 +5,7 @@
 
 [![Manual, as a PDF](https://img.shields.io/badge/Manual-PDF-608FEA)](docs/manual.pdf)
 [![GitHub repository](https://img.shields.io/badge/GitHub-Repository-608FEA?logo=github)](https://github.com/techgustavo/sanity)
+[![Typst package](https://img.shields.io/badge/dynamic/toml?url=https%3A%2F%2Fraw.githubusercontent.com%2Ftechgustavo%2Fsanity%2Fmain%2Ftypst.toml&query=%24.package.version&prefix=v&logo=typst&label=package&color=40C46E)](https://typst.app/universe/package/sanity)
 
 
 `sanity` is a simple Typst package to find unreferenced figures, uncited sources and lost labels.
