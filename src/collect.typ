@@ -1,3 +1,5 @@
+#import "core.typ": citation-tally-of
+
 #let label-of(elem) = if elem.has("label") { str(elem.label) } else { none }
 
 #let paged() = if "target" in dictionary(std) { target() == "paged" } else { true }
@@ -110,11 +112,34 @@
   (elements: elements, images: images, tables: tables, count: elements.len() + images.len() + tables.len())
 }
 
+#let _caption-bodies(elements) = {
+  elements
+    .filter(e => e.group in ("figure", "table"))
+    .map(e => e.element.caption)
+    .filter(c => c != none)
+    .map(c => c.body)
+}
+
 /// bib keys
-#let cited-keys() = {
+#let cited-keys(elements) = {
   let cited = (:)
-  for c in query(std.cite) { cited.insert(str(c.key), true) }
-  cited
+  for c in query(std.cite) {
+    let key = str(c.key)
+    cited.insert(key, cited.at(key, default: 0) + 1)
+  }
+
+  let in-captions = (:)
+  for body in _caption-bodies(elements) {
+    for (key, n) in citation-tally-of(body) {
+      in-captions.insert(key, in-captions.at(key, default: 0) + n)
+    }
+  }
+
+  let out = (:)
+  for (key, total) in cited {
+    if total > in-captions.at(key, default: 0) { out.insert(key, true) }
+  }
+  out
 }
 
 #let bibliographies() = query(std.bibliography)
