@@ -38,7 +38,7 @@
   "reference-order": false,
   "missing-caption": true,
   "empty-caption": true,
-  "missing-label": false,
+  "missing-label": true,
   "duplicate-caption": false,
   "uncited-entry": true,
   "bibliography-not-checked": true,
@@ -124,12 +124,32 @@
   let func = repr(it.func())
   // an apostrophe is a letter's business, and a caption reads badly without it
   if func == "smartquote" { return if it.double { "\"" } else { "'" } }
+  if func == "cite" { return "@" + str(it.key) }
+  if func == "ref" { return "@" + str(it.target) }
   if func in _breaks { " " } else { "" }
 }
 
 #let _runs = regex("\\s+")
 
 #let comparable(it) = text-of(it).replace(_runs, " ").trim()
+
+#let _merge-counts(a, b) = {
+  for (key, n) in b { a.insert(key, a.at(key, default: 0) + n) }
+  a
+}
+
+#let citation-tally-of(it) = {
+  if it == none { return (:) }
+  if type(it) != content { return (:) }
+  let func = it.func()
+  if func == std.cite { return (str(it.key): 1) }
+  if func == std.ref { return (str(it.target): 1) }
+  if it.has("children") {
+    return it.children.fold((:), (out, c) => _merge-counts(out, citation-tally-of(c)))
+  }
+  if it.has("body") and it.body != none { return citation-tally-of(it.body) }
+  (:)
+}
 
 /// whether a piece of content says nothing at all
 #let blank(it) = {
