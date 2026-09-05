@@ -193,7 +193,7 @@ The package needs Typst 0.14 or newer, but the command line script needs 0.15 (w
   "table-without-header": true,
 ))
 
-Twelve checks run as soon as you apply the `show` rule. The other six are `off` until you ask for them with `checks: ("id": true)`.
+Thirteen checks run as soon as you apply the `show` rule. The other five are `off` until you ask for them with `checks: ("id": true)`.
 
 An element is _only_ reported as unreferenced if you gave it a label, so a figure with no label _cannot_ be pointed at anyway.
 
@@ -254,7 +254,7 @@ Note: Elements Typst cannot number are never called unreferenced.
 ]
 
 #check("missing-label")[
-  A captioned figure or table with no label. It is `off` by default because some documents caption figures they never intend to reference.
+  A captioned figure or table, or a numbered equation or footnote, with no label. Without one, sanity has no way to tell whether it is ever pointed at, and so the `unreferenced-*` checks skip it.
 ]
 
 #check("duplicate-caption")[
@@ -266,7 +266,9 @@ Note: Elements Typst cannot number are never called unreferenced.
 #check("uncited-entry")[
   An entry in the bibliography data that nothing in the document cites. It can
   only run when sanity has that data (see #link(<bibliography>)[The
-  bibliography]).
+  bibliography]). A citation written only inside a figure or table caption
+  does not count: a source worth crediting there is worth discussing in the
+  text too.
 ]
 
 #check("bibliography-not-checked")[
@@ -445,5 +447,3 @@ jobs:
 ```
 
 `strict: true` setting causes the compilation itself fails, so `typst compile` gates the build and no script is needed. To get a PDF out of such a document anyway, pass `--input sanity=report`, or `--input sanity=off` for the untouched one.
-
-= Thanks for considering this package!
