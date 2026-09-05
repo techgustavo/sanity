@@ -1,0 +1,4 @@
+warning: bibliography entry "caption-only" is never cited [uncited-entry]
+warning: bibliography entry "never" is never cited [uncited-entry]
+
+sanity: 2 warnings

@@ -1,0 +1,6 @@
+warning: equation on page 1 has no label [missing-label]
+  ┌─ page 1
+warning: footnote on page 1 has no label [missing-label]
+  ┌─ page 1
+
+sanity: 2 warnings

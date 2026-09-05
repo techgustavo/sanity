@@ -1,0 +1,4 @@
+warning: figure <fig:three> has the same caption as figure <fig:one> [duplicate-caption]
+  ┌─ page 1
+
+sanity: 1 warning
