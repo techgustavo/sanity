@@ -56,4 +56,27 @@
   out
 }
 
-#let run(elements, cfg) = _duplicates(elements, cfg) + _level-skips(elements, cfg)
+#let _missing-labels(elements, cfg) = {
+  let id = "missing-label"
+  if not cfg.checks.at(id, default: false) { return () }
+
+  let out = ()
+  for elem in elements {
+    if elem.group not in ("equation", "footnote") { continue }
+    if elem.target != none or not elem.numbered { continue }
+    if elem.group == "footnote" and type(elem.element.body) == label { continue }
+    out.push(finding(
+      id,
+      cfg.severities.at(id),
+      describe(elem) + " has no label",
+      page: elem.page,
+      page-label: elem.page-label,
+      order: elem.order,
+    ))
+  }
+  out
+}
+
+#let run(elements, cfg) = (
+  _duplicates(elements, cfg) + _level-skips(elements, cfg) + _missing-labels(elements, cfg)
+)

@@ -31,7 +31,7 @@
     if cfg.bib-keys == none {
       citations.not-checked(collect.bibliography-sources(bibs), cfg)
     } else {
-      citations.run(cfg.bib-keys, collect.cited-keys(), cfg)
+      citations.run(cfg.bib-keys, collect.cited-keys(elements), cfg)
     }
   } else { () }
   findings += from-bibliography.enumerate().map(((i, f)) => f + (order: doc.count + i))
