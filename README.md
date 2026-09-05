@@ -11,7 +11,7 @@
 `sanity` is a simple Typst package to find unreferenced figures, uncited sources and lost labels.
 
 ```typst
-#import "@preview/sanity:0.1.0": *
+#import "@preview/sanity:0.2.0": *
 
 #show: sanity
 ```
@@ -50,7 +50,7 @@ The [manual](docs/manual.pdf) gives each check an entry of its own.
 
 ## From the command line
 
-You can also use [`bin/sanity`](https://github.com/techgustavo/sanity/blob/v0.1.0/bin/sanity) script (and it reports on a document without touching it). It exits `1` on a warning/error, `0` when there is nothing to report, and `2` when the document does not compile.
+You can also use [`bin/sanity`](https://github.com/techgustavo/sanity/blob/v0.2.0/bin/sanity) script (and it reports on a document without touching it). It exits `1` on a warning/error, `0` when there is nothing to report, and `2` when the document does not compile.
 
 ```console
 $ bin/sanity paper.typ

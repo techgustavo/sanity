@@ -3,7 +3,7 @@
 # sanity paper.typ --json
 set -eu
 
-package=${SANITY_PACKAGE:-@preview/sanity:0.1.0}
+package=${SANITY_PACKAGE:-@preview/sanity:0.2.0}
 
 usage() {
   cat <<'EOF'

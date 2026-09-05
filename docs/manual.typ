@@ -123,7 +123,7 @@
       #{
         show package-name: x => x
         text(size: 8.5pt, font: mono, fill: quiet)[
-          version 0.1.0,
+          version 0.2.0,
           #link("https://github.com/techgustavo/sanity")[github.com/techgustavo/sanity]
         ]
       }
@@ -139,7 +139,7 @@
 sanity analyzes your document after it has been compiled by Typst and reports unreferenced figures, uncited bibliography entries, as well as captions and labels that have gone missing. You add it as a `show` rule.
 
 ```typst
-#import "@preview/sanity:0.1.0": *
+#import "@preview/sanity:0.2.0": *
 
 #show: sanity
 ```

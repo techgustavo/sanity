@@ -1,5 +1,5 @@
 // in a document of your own the import is
-// #import "@preview/sanity:0.1.0": *
+// #import "@preview/sanity:0.2.0": *
 #import "/lib.typ": *
 
 #show: sanity.with(bibliography: read("refs.bib"))
