@@ -34,7 +34,7 @@ On this page you can *check* out
 
 ## What it checks
 
-Twelve checks are performed by default as soon as you apply the `show` rule, including checks for figures, tables, listings, and equations, and others. Only elements you labelled yourself are reported as unreferenced. An unlabelled figure cannot be pointed at and is *often* decorative.
+Thirteen checks are performed by default as soon as you apply the `show` rule, including checks for figures, tables, listings, and equations, and others. Only elements you labelled yourself are reported as unreferenced. An unlabelled figure cannot be pointed at and is *often* decorative.
 
 The [manual](docs/manual.pdf) gives each check an entry of its own.
 
@@ -157,7 +157,3 @@ jobs:
 ```
 
 </details>
-
----
-
-Thanks for considering this package!
